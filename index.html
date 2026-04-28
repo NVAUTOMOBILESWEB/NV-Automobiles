@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>NV Automobiles | Fixed Portal</title>
+    <style>
+        body { font-family: sans-serif; background: #f4f4f4; padding: 20px; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 10px; border: 1px solid #ddd; }
+        .search-box { width: 100%; padding: 12px; margin-bottom: 10px; border: 2px solid #0056b3; border-radius: 5px; }
+        #results { border: 1px solid #eee; display: none; margin-bottom: 20px; }
+        .item { padding: 10px; border-bottom: 1px solid #eee; cursor: pointer; display: flex; justify-content: space-between; }
+        .item:hover { background: #f0f7ff; }
+        #adminPanel { display: none; background: #fffde7; padding: 20px; border: 2px dashed #fbc02d; margin-top: 20px; }
+        .btn { background: #0056b3; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div class="container" id="mainView">
+    <img src="NV Plus logo.jpg" alt="Logo missing - place image in folder" style="max-width:150px; display:block; margin:auto;">
+    <h2 style="text-align:center;">NV Automobiles Order Desk</h2>
+    
+    <input type="text" id="pSearch" class="search-box" placeholder="Search Part Number (e.g. 4005)..." onkeyup="runSearch()">
+    <div id="results"></div>
+
+    <div id="cartArea">
+        <h4>Current Selection:</h4>
+        <ul id="cartList"></ul>
+    </div>
+
+    <hr>
+    <button class="btn" onclick="checkLogin()">Owner Login</button>
+</div>
+
+<div class="container" id="adminPanel">
+    <h3>Owner Dashboard</h3>
+    <p>Stock & Price controls are active.</p>
+    <button onclick="closeAdmin()" style="background:#666; color:white; border:none; padding:5px 10px; cursor:pointer;">Logout</button>
+</div>
+
+<script>
+    // Sample Inventory for Testing
+    const inventory = [
+        { id: "40050858", name: "RING CONE", price: 150 },
+        { id: "40054213", name: "GEAR", price: 850 },
+        { id: "40054020", name: "SPACER", price: 200 }
+    ];
+
+    function runSearch() {
+        const query = document.getElementById('pSearch').value;
+        const box = document.getElementById('results');
+        box.innerHTML = '';
+        
+        if (query.length < 2) {
+            box.style.display = 'none';
+            return;
+        }
+
+        const matches = inventory.filter(i => i.id.includes(query) || i.name.includes(query.toUpperCase()));
+        
+        if (matches.length > 0) {
+            box.style.display = 'block';
+            matches.forEach(item => {
+                box.innerHTML += `<div class="item" onclick="add('${item.name}')"><span>${item.id} - ${item.name}</span> <b>₹${item.price}</b></div>`;
+            });
+        }
+    }
+
+    function add(name) {
+        const list = document.getElementById('cartList');
+        list.innerHTML += `<li>${name} added to request</li>`;
+        document.getElementById('results').style.display = 'none';
+        document.getElementById('pSearch').value = '';
+    }
+
+    // THE LOGIN FUNCTION
+    function checkLogin() {
+        const pass = prompt("Enter Password (Default is NVPLUS):");
+        if (pass === "NVPLUS") {
+            document.getElementById('mainView').style.display = 'none';
+            document.getElementById('adminPanel').style.display = 'block';
+        } else {
+            alert("Wrong Password. Try NVPLUS in all capitals.");
+        }
+    }
+
+    function closeAdmin() {
+        document.getElementById('mainView').style.display = 'block';
+        document.getElementById('adminPanel').style.display = 'none';
+    }
+</script>
+
+</body>
+</html>
